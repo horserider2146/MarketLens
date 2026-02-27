@@ -178,7 +178,7 @@ implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
 **Ritarshi Roy**
 - Data Science Student
-- GitHub: [@YOUR_USERNAME](https://github.com/YOUR_USERNAME)
+- GitHub: [@horserider2146](https://github.com/horserider2146)
 
 ---
 
