@@ -10,13 +10,6 @@ MarketLens is a real-time cryptocurrency tracking Android application built with
 
 ---
 
-## 📱 Screenshots
-
-> Market Screen | Detail Screen | Watchlist Screen
-
-*(Add your screenshots here)*
-
----
 
 ## ✨ Features
 
