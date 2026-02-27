@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.MarketLens" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#1DB954</item>
+        <item name="colorPrimaryVariant">#158a3e</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSurface">#121212</item>
+        <item name="android:windowBackground">#121212</item>
+    </style>
+</resources>
