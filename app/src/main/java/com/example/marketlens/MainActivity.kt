@@ -12,7 +12,6 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
 
-        // Load home by default
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, HomeFragment())
@@ -36,6 +35,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_watchlist -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, WatchlistFragment())
+                        .commit()
+                    true
+                }
+                R.id.nav_profile -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, ProfileFragment())
                         .commit()
                     true
                 }
