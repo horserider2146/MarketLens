@@ -1,5 +1,6 @@
 package com.example.marketlens
 
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -17,6 +18,22 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.fragment_container, HomeFragment())
                 .commit()
         }
+
+        // Handle back button
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (bottomNav.selectedItemId != R.id.nav_home) {
+                    // Go back to Market tab
+                    bottomNav.selectedItemId = R.id.nav_home
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, HomeFragment())
+                        .commit()
+                } else {
+                    // Already on Market tab — close app
+                    finish()
+                }
+            }
+        })
 
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
