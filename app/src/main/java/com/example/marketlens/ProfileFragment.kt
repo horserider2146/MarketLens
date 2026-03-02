@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -35,11 +37,26 @@ class ProfileFragment : Fragment() {
         val profileNameDetail = view.findViewById<TextView>(R.id.profileNameDetail)
         val profileEmailDetail = view.findViewById<TextView>(R.id.profileEmailDetail)
         val signOutBtn = view.findViewById<Button>(R.id.signOutBtn)
+        val darkModeSwitch = view.findViewById<SwitchMaterial>(R.id.darkModeSwitch)
 
-        // Load user data from Firestore
+        // Load saved theme preference
+        val prefs = requireContext().getSharedPreferences("MarketLensPrefs", android.content.Context.MODE_PRIVATE)
+        val isDarkMode = prefs.getBoolean("darkMode", true)
+        darkModeSwitch.isChecked = isDarkMode
+
+        darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean("darkMode", isChecked).apply()
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+            requireActivity().recreate()
+        }
+
+        // Load user data
         val userId = auth.currentUser?.uid
         val email = auth.currentUser?.email ?: ""
-
         profileEmail.text = email
         profileEmailDetail.text = email
 
@@ -53,10 +70,7 @@ class ProfileFragment : Fragment() {
         }
 
         signOutBtn.setOnClickListener {
-            // Clear session
-            val prefs = requireContext().getSharedPreferences("MarketLensPrefs", android.content.Context.MODE_PRIVATE)
             prefs.edit().clear().apply()
-
             auth.signOut()
             startActivity(Intent(requireContext(), SignInActivity::class.java))
             requireActivity().finish()

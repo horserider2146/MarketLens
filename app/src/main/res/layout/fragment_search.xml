@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#121212"
-    android:padding="16dp">
+    android:background="#121212">
 
     <EditText
         android:id="@+id/searchInput"
@@ -14,8 +13,10 @@
         android:textColorHint="#888888"
         android:textColor="#FFFFFF"
         android:backgroundTint="#1DB954"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:inputType="text"
         android:imeOptions="actionSearch"
         android:maxLines="1"
@@ -32,6 +33,7 @@
         android:letterSpacing="0.1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginBottom="12dp"/>
 
     <ProgressBar
@@ -46,6 +48,8 @@
         android:id="@+id/recyclerViewSearch"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:clipToPadding="false"
         android:paddingBottom="16dp"/>
 

@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 
 class CoinAdapter(
     private var coins: List<Coin>,
+    private var currencySymbol: String = "$",
     private val onItemClick: (Coin) -> Unit
 ) : RecyclerView.Adapter<CoinAdapter.CoinViewHolder>() {
 
@@ -30,10 +31,9 @@ class CoinAdapter(
 
     override fun onBindViewHolder(holder: CoinViewHolder, position: Int) {
         val coin = coins[position]
-
         holder.coinName.text = coin.name
         holder.coinSymbol.text = coin.symbol
-        holder.coinPrice.text = "$${String.format("%,.2f", coin.currentPrice)}"
+        holder.coinPrice.text = "$currencySymbol${String.format("%,.2f", coin.currentPrice)}"
 
         val change = coin.priceChange24h
         holder.coinChange.text = "${String.format("%.2f", change)}%"
@@ -53,6 +53,11 @@ class CoinAdapter(
 
     fun updateCoins(newCoins: List<Coin>) {
         coins = newCoins
+        notifyDataSetChanged()
+    }
+
+    fun updateCurrencySymbol(symbol: String) {
+        currencySymbol = symbol
         notifyDataSetChanged()
     }
 }
