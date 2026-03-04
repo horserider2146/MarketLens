@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#121212">
+    android:background="?android:attr/windowBackground">
 
     <TextView
         android:text="Market"
-        android:textColor="#FFFFFF"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_width="match_parent"
@@ -17,6 +17,7 @@
         android:paddingBottom="16dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"/>
+
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -71,12 +72,19 @@
         android:indeterminateTint="#1DB954"
         android:visibility="gone"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewCoins"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:clipToPadding="false"/>
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewCoins"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:clipToPadding="false"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

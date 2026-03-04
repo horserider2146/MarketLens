@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="#121212">
+    android:background="?android:attr/windowBackground">
 
     <TextView
         android:text="ML"
@@ -17,7 +17,7 @@
 
     <TextView
         android:text="MarketLens"
-        android:textColor="#FFFFFF"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="36sp"
         android:textStyle="bold"
         android:layout_width="wrap_content"

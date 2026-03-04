@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212">
+    android:background="?android:attr/windowBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
         <TextView
             android:id="@+id/profileName"
             android:text="Loading..."
-            android:textColor="#FFFFFF"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
         <TextView
             android:id="@+id/profileEmail"
             android:text=""
-            android:textColor="#888888"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="#1E1E1E"
+            app:cardBackgroundColor="?attr/colorSurface"
             app:cardCornerRadius="16dp"
             xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -56,7 +56,7 @@
 
                 <TextView
                     android:text="Account Info"
-                    android:textColor="#888888"
+                    android:textColor="?android:attr/textColorSecondary"
                     android:textSize="12sp"
                     android:textAllCaps="true"
                     android:layout_width="wrap_content"
@@ -71,7 +71,7 @@
 
                     <TextView
                         android:text="Name"
-                        android:textColor="#888888"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
                     <TextView
                         android:id="@+id/profileNameDetail"
                         android:text="—"
-                        android:textColor="#FFFFFF"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="14sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
@@ -94,7 +94,7 @@
 
                     <TextView
                         android:text="Email"
-                        android:textColor="#888888"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
                     <TextView
                         android:id="@+id/profileEmailDetail"
                         android:text="—"
-                        android:textColor="#FFFFFF"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="14sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
@@ -118,7 +118,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            app:cardBackgroundColor="#1E1E1E"
+            app:cardBackgroundColor="?attr/colorSurface"
             app:cardCornerRadius="16dp"
             xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -130,7 +130,7 @@
 
                 <TextView
                     android:text="App Info"
-                    android:textColor="#888888"
+                    android:textColor="?android:attr/textColorSecondary"
                     android:textSize="12sp"
                     android:textAllCaps="true"
                     android:layout_width="wrap_content"
@@ -145,15 +145,15 @@
 
                     <TextView
                         android:text="Version"
-                        android:textColor="#888888"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"/>
 
                     <TextView
-                        android:text="1.0"
-                        android:textColor="#FFFFFF"
+                        android:text="1.2"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="14sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
@@ -167,7 +167,7 @@
 
                     <TextView
                         android:text="Data Source"
-                        android:textColor="#888888"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -175,7 +175,7 @@
 
                     <TextView
                         android:text="CoinGecko API"
-                        android:textColor="#FFFFFF"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="14sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
@@ -189,7 +189,7 @@
 
                     <TextView
                         android:text="Dark Mode"
-                        android:textColor="#888888"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -213,7 +213,7 @@
             android:layout_height="wrap_content"
             android:text="Sign Out"
             android:backgroundTint="#FF4444"
-            android:textColor="#FFFFFF"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"
             android:padding="14dp"/>
 

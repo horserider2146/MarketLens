@@ -3,5 +3,8 @@
         <item name="colorPrimary">#1DB954</item>
         <item name="colorPrimaryVariant">#158a3e</item>
         <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSurface">#F5F5F5</item>
+        <item name="android:windowBackground">#F5F5F5</item>
+        <item name="android:textColorPrimary">#000000</item>
     </style>
 </resources>
