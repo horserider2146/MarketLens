@@ -55,6 +55,12 @@ class MainActivity : AppCompatActivity() {
                         .commit()
                     true
                 }
+                R.id.nav_portfolio -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, PortfolioFragment())
+                        .commit()
+                    true
+                }
                 R.id.nav_profile -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, ProfileFragment())

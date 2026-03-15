@@ -1,17 +1,22 @@
 package com.example.marketlens
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toast
+import android.widget.*
+import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -19,12 +24,9 @@ class HomeFragment : Fragment() {
     private lateinit var adapter: CoinAdapter
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private val currencySymbols = mapOf("usd" to "$", "inr" to "₹", "eur" to "€")
+    private val viewModel: HomeViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -35,15 +37,16 @@ class HomeFragment : Fragment() {
         val btnUSD = view.findViewById<Button>(R.id.btnUSD)
         val btnINR = view.findViewById<Button>(R.id.btnINR)
         val btnEUR = view.findViewById<Button>(R.id.btnEUR)
+        val btnSort = view.findViewById<ImageButton>(R.id.btnSort)
+        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
+        val offlineBanner = view.findViewById<TextView>(R.id.offlineBanner)
+        val globalMarketBar = view.findViewById<TextView>(R.id.globalMarketBar)
+        val shimmerLayout = view.findViewById<ShimmerFrameLayout>(R.id.shimmerLayout)
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
 
-        // Green spinner color
-        swipeRefresh.setColorSchemeColors(android.graphics.Color.parseColor("#1DB954"))
+        swipeRefresh.setColorSchemeColors(Color.parseColor("#1DB954"))
 
-        adapter = CoinAdapter(
-            emptyList(),
-            currencySymbols[AppCache.selectedCurrency] ?: "$"
-        ) { coin ->
+        adapter = CoinAdapter(emptyList(), "$") { coin, imageView ->
             val intent = Intent(requireContext(), DetailActivity::class.java).apply {
                 putExtra("COIN_ID", coin.id)
                 putExtra("COIN_NAME", coin.name)
@@ -53,101 +56,116 @@ class HomeFragment : Fragment() {
                 putExtra("COIN_CURRENCY", AppCache.selectedCurrency)
                 putExtra("COIN_SYMBOL", currencySymbols[AppCache.selectedCurrency] ?: "$")
             }
-            startActivity(intent)
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                requireActivity(), imageView, "coin_image_${coin.id}"
+            )
+            startActivity(intent, options.toBundle())
         }
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
-        updateButtonStates(btnUSD, btnINR, btnEUR)
+        btnUSD.setOnClickListener { viewModel.switchCurrency("usd") }
+        btnINR.setOnClickListener { viewModel.switchCurrency("inr") }
+        btnEUR.setOnClickListener { viewModel.switchCurrency("eur") }
+        swipeRefresh.setOnRefreshListener { viewModel.refresh() }
 
-        // Show cached data immediately
-        val cached = AppCache.coinCache[AppCache.selectedCurrency]
-        if (cached != null) {
-            adapter.updateCoins(cached.first)
-            adapter.updateCurrencySymbol(currencySymbols[AppCache.selectedCurrency] ?: "$")
-        }
+        btnSort.setOnClickListener { showSortMenu(btnSort) }
 
-        btnUSD.setOnClickListener { switchCurrency("usd", btnUSD, btnINR, btnEUR) }
-        btnINR.setOnClickListener { switchCurrency("inr", btnINR, btnUSD, btnEUR) }
-        btnEUR.setOnClickListener { switchCurrency("eur", btnEUR, btnUSD, btnINR) }
-
-        // Pull to refresh — force fresh data
-        swipeRefresh.setOnRefreshListener {
-            AppCache.coinCache.remove(AppCache.selectedCurrency)
-            loadCoins(forceRefresh = true)
-        }
-
-        loadCoinsIfNeeded()
-    }
-
-    private fun updateButtonStates(btnUSD: Button, btnINR: Button, btnEUR: Button) {
-        val active = android.graphics.Color.parseColor("#1DB954")
-        val inactive = android.graphics.Color.parseColor("#333333")
-        btnUSD.backgroundTintList = android.content.res.ColorStateList.valueOf(
-            if (AppCache.selectedCurrency == "usd") active else inactive)
-        btnINR.backgroundTintList = android.content.res.ColorStateList.valueOf(
-            if (AppCache.selectedCurrency == "inr") active else inactive)
-        btnEUR.backgroundTintList = android.content.res.ColorStateList.valueOf(
-            if (AppCache.selectedCurrency == "eur") active else inactive)
-    }
-
-    private fun switchCurrency(currency: String, active: Button, vararg inactive: Button) {
-        if (AppCache.selectedCurrency == currency) return
-
-        AppCache.selectedCurrency = currency
-        active.backgroundTintList = android.content.res.ColorStateList.valueOf(
-            android.graphics.Color.parseColor("#1DB954"))
-        inactive.forEach {
-            it.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                android.graphics.Color.parseColor("#333333"))
-        }
-
-        val cached = AppCache.coinCache[currency]
-        if (cached != null) {
-            adapter.updateCoins(cached.first)
-            adapter.updateCurrencySymbol(currencySymbols[currency] ?: "$")
-            return
-        }
-
-        loadCoinsIfNeeded()
-    }
-
-    private fun loadCoinsIfNeeded() {
-        val now = System.currentTimeMillis()
-        val cached = AppCache.coinCache[AppCache.selectedCurrency]
-
-        if (cached != null && (now - cached.second) < AppCache.cacheDuration) {
-            adapter.updateCoins(cached.first)
-            adapter.updateCurrencySymbol(currencySymbols[AppCache.selectedCurrency] ?: "$")
-            return
-        }
-
-        loadCoins()
-    }
-
-    private fun loadCoins(forceRefresh: Boolean = false) {
-        val progressBar = view?.findViewById<android.widget.ProgressBar>(R.id.progressBar)
-        if (!forceRefresh) progressBar?.visibility = View.VISIBLE
-
-        lifecycleScope.launch {
-            try {
-                val coins = RetrofitClient.api.getCoins(currency = AppCache.selectedCurrency)
-                AppCache.coinCache[AppCache.selectedCurrency] = Pair(coins, System.currentTimeMillis())
-                adapter.updateCoins(coins)
-                adapter.updateCurrencySymbol(currencySymbols[AppCache.selectedCurrency] ?: "$")
-            } catch (e: Exception) {
-                val cachedFallback = AppCache.coinCache[AppCache.selectedCurrency]
-                if (cachedFallback != null) {
-                    adapter.updateCoins(cachedFallback.first)
-                    adapter.updateCurrencySymbol(currencySymbols[AppCache.selectedCurrency] ?: "$")
-                } else {
-                    Toast.makeText(requireContext(), "Please wait a moment", Toast.LENGTH_SHORT).show()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.uiState.collect { state ->
+                        when (state) {
+                            is HomeViewModel.UiState.Loading -> {
+                                progressBar.visibility = View.GONE
+                                shimmerLayout.visibility = View.VISIBLE
+                                shimmerLayout.startShimmer()
+                                recyclerView.visibility = View.GONE
+                                offlineBanner.visibility = View.GONE
+                                swipeRefresh.isRefreshing = false
+                            }
+                            is HomeViewModel.UiState.Success -> {
+                                shimmerLayout.stopShimmer()
+                                shimmerLayout.visibility = View.GONE
+                                progressBar.visibility = View.GONE
+                                recyclerView.visibility = View.VISIBLE
+                                swipeRefresh.isRefreshing = false
+                                adapter.updateCoins(state.coins)
+                                adapter.updateCurrencySymbol(currencySymbols[state.currency] ?: "$")
+                                updateButtonStates(btnUSD, btnINR, btnEUR, state.currency)
+                                if (state.isFromCache && state.cacheAgeMs > 60_000) {
+                                    val min = state.cacheAgeMs / 60_000
+                                    offlineBanner.text = "Cached data · updated ${min}m ago"
+                                    offlineBanner.visibility = View.VISIBLE
+                                } else {
+                                    offlineBanner.visibility = View.GONE
+                                }
+                            }
+                            is HomeViewModel.UiState.Error -> {
+                                shimmerLayout.stopShimmer()
+                                shimmerLayout.visibility = View.GONE
+                                progressBar.visibility = View.GONE
+                                recyclerView.visibility = View.VISIBLE
+                                swipeRefresh.isRefreshing = false
+                                offlineBanner.visibility = View.GONE
+                                Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
                 }
-            } finally {
-                progressBar?.visibility = View.GONE
-                swipeRefresh.isRefreshing = false
+                launch {
+                    viewModel.globalMarket.collect { gm ->
+                        if (gm != null) {
+                            val cap = formatMarketCap(gm.marketCapUsd)
+                            val changeSign = if (gm.change24h >= 0) "+" else ""
+                            val changeColor = if (gm.change24h >= 0) "#1DB954" else "#FF4444"
+                            globalMarketBar.text =
+                                "MCap: $cap  |  BTC Dom: ${"%.1f".format(gm.btcDominance)}%  |  24h: $changeSign${"%.2f".format(gm.change24h)}%"
+                            globalMarketBar.setTextColor(Color.parseColor(changeColor))
+                            globalMarketBar.visibility = View.VISIBLE
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private fun showSortMenu(anchor: View) {
+        val popup = PopupMenu(requireContext(), anchor)
+        popup.menu.apply {
+            add(0, 0, 0, "Market Cap (Default)")
+            add(0, 1, 1, "Price: High → Low")
+            add(0, 2, 2, "Price: Low → High")
+            add(0, 3, 3, "24h Change: Best")
+            add(0, 4, 4, "24h Change: Worst")
+        }
+        popup.setOnMenuItemClickListener { item ->
+            viewModel.setSortOrder(
+                when (item.itemId) {
+                    1 -> SortOrder.PRICE_HIGH
+                    2 -> SortOrder.PRICE_LOW
+                    3 -> SortOrder.CHANGE_BEST
+                    4 -> SortOrder.CHANGE_WORST
+                    else -> SortOrder.MARKET_CAP
+                }
+            )
+            true
+        }
+        popup.show()
+    }
+
+    private fun updateButtonStates(btnUSD: Button, btnINR: Button, btnEUR: Button, currency: String) {
+        val active = Color.parseColor("#1DB954")
+        val inactive = Color.parseColor("#333333")
+        btnUSD.backgroundTintList = android.content.res.ColorStateList.valueOf(if (currency == "usd") active else inactive)
+        btnINR.backgroundTintList = android.content.res.ColorStateList.valueOf(if (currency == "inr") active else inactive)
+        btnEUR.backgroundTintList = android.content.res.ColorStateList.valueOf(if (currency == "eur") active else inactive)
+    }
+
+    private fun formatMarketCap(value: Double): String = when {
+        value >= 1_000_000_000_000 -> "${"%.2f".format(value / 1_000_000_000_000)}T"
+        value >= 1_000_000_000 -> "${"%.1f".format(value / 1_000_000_000)}B"
+        else -> "${"%.0f".format(value / 1_000_000)}M"
     }
 }

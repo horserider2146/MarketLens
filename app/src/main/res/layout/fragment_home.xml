@@ -5,23 +5,54 @@
     android:orientation="vertical"
     android:background="?android:attr/windowBackground">
 
-    <TextView
-        android:text="Market"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="24sp"
-        android:textStyle="bold"
+    <!-- Header row: title + sort button -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:paddingTop="24dp"
-        android:paddingBottom="16dp"
+        android:paddingBottom="8dp"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"/>
+        android:paddingEnd="8dp">
+
+        <TextView
+            android:text="Market"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/btnSort"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_menu_sort_by_size"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Sort"/>
+
+    </LinearLayout>
+
+    <!-- Global market summary strip -->
+    <TextView
+        android:id="@+id/globalMarketBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1A1DB954"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="11sp"
+        android:gravity="center"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:visibility="gone"/>
 
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp">
@@ -64,6 +95,18 @@
 
     </HorizontalScrollView>
 
+    <TextView
+        android:id="@+id/offlineBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#2A1DB954"
+        android:textColor="#1DB954"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:visibility="gone"/>
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
@@ -71,6 +114,30 @@
         android:layout_gravity="center"
         android:indeterminateTint="#1DB954"
         android:visibility="gone"/>
+
+    <!-- Shimmer skeleton while loading -->
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/item_skeleton_coin"/>
+            <include layout="@layout/item_skeleton_coin"/>
+            <include layout="@layout/item_skeleton_coin"/>
+            <include layout="@layout/item_skeleton_coin"/>
+            <include layout="@layout/item_skeleton_coin"/>
+
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
